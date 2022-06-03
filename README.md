@@ -38,9 +38,9 @@ Com a legenda no rodapé substituir os dados abreviados das colunas OD e AMB par
 
 - `Funcionalidade 2`: Tratar os dados obtidos 
 
-- `Funcionalidade 2a`: Salvar os dados como cvs e armazenar em uma pasta compactada ZIP
+- `Funcionalidade 2a`: Salvar os dados como csv e armazenar em uma pasta compactada ZIP
 
-## 📚: Bibliotecas utilizada
+## 📚: Bibliotecas utilizadas
 
 - `os`
 - `zipfile`
@@ -63,7 +63,7 @@ Com a legenda no rodapé substituir os dados abreviados das colunas OD e AMB par
     
     anexo_I_Rol_de_procedimentos.rename(columns={'OD': 'Seg.Odontológico', 'AMB': 'Seg.Ambulatorial'})
 
-#### Obtendo o sumario de normas
+#### Obtendo o sumário de normas
     
     sumario_de_normas = pd.read_excel('https://www.gov.br/ans/pt-br/arquivos/assuntos/consumidor/o-que-seu-plano-deve-cobrir/Anexo_I_Rol_2021RN_465.2021_RN473_RN478_RN480_RN513_RN536.xlsx', sheet_name='Sumário de Normas')
     sumario_de_normas.head()
