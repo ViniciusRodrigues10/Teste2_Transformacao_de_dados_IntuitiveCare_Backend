@@ -46,73 +46,41 @@ Com a legenda no rodapé substituir os dados abreviados das colunas OD e AMB par
 - `zipfile`
 - `pandas`
 
-## Funções desenvolvidas
+#### Obtendo dados do site gov.br
 
-   ### Função download_file(url, address)
-   
-   
-      def download_file(url, address):
-          answer = requests.get(url, stream=True)
-          if answer.status_code == requests.codes.OK:
-              with open(address, 'wb') as new_file:
-                  for part in answer.iter_content(chunk_size=256):
-                      new_file.write(part)
-              print('Download finished. Save in: {}'.format(address))
-          else:
-              answer.raise_for_status()
+    anexo_I_Rol_de_procedimentos = pd.read_excel('https://www.gov.br/ans/pt-br/arquivos/assuntos/consumidor/o-que-seu-plano-deve-cobrir/Anexo_I_Rol_2021RN_465.2021_RN473_RN478_RN480_RN513_RN536.xlsx', sheet_name='Anexo I_Rol de Procedimentos', skiprows=3)
+
+#### Renomeando colunas
+
+    anexo_I_Rol_de_procedimentos.columns = anexo_I_Rol_de_procedimentos.iloc[0]
+    anexo_I_Rol_de_procedimentos.head()
+    anexo_I_Rol_de_procedimentos.drop(anexo_I_Rol_de_procedimentos.index[0], inplace=True)
+    anexo_I_Rol_de_procedimentos
+
+#### Bônus(renomeando colunas OD e AMB)
+
+![image](https://user-images.githubusercontent.com/76957963/171871936-97345a7c-1e0b-4847-a120-c69b28f1a803.png)
     
-   Função que tem como retorno void, utilizada apenas para acessar a url informada, fazer o dowload do arquivo e armazena-lo na pasta desejada
+    anexo_I_Rol_de_procedimentos.rename(columns={'OD': 'Seg.Odontológico', 'AMB': 'Seg.Ambulatorial'})
+
+#### Obtendo o sumario de normas
     
-   #### Parâmetro: url
-                      Recebe a url do arquivo que deseja realizar o download
+    sumario_de_normas = pd.read_excel('https://www.gov.br/ans/pt-br/arquivos/assuntos/consumidor/o-que-seu-plano-deve-cobrir/Anexo_I_Rol_2021RN_465.2021_RN473_RN478_RN480_RN513_RN536.xlsx', sheet_name='Sumário de Normas')
+    sumario_de_normas.head()
 
-   #### Parâmetro: address
-                      Recebe o caminho que o arquivo deve ser armazenado
-                      
-   ### Função file_type(file_download_link)
+#### Realizando o tratamento de dados e obtendos as colunas e linhas necessárias da folha do sumário de normas
     
-      def file_type(file_download_link):
-          file_type = file_download_link.split('.')
+    sumario_de_normas = pd.read_excel('https://www.gov.br/ans/pt-br/arquivos/assuntos/consumidor/o-que-seu-plano-deve-cobrir/Anexo_I_Rol_2021RN_465.2021_RN473_RN478_RN480_RN513_RN536.xlsx', sheet_name='Sumário de Normas', usecols=[7,9,10], skiprows=1)
+        sumario_de_normas
+    
+#### Salvando os dados em um arquivo csv
 
-          return file_type[-1]
-     
-   Função que retorno uma string com o tipo do arquivo
-     
-   #### Parâmetro: file_download_link
-                      Recebe o link do arquivo que deseja realizar o download
-     
-   ### Função attachment_number(file_download_link)
-     
-      def attachment_number(file_download_link):
-          attachment_number = file_download_link.split('/')
-          attachment_number = file_download_link.split('_')
+    anexo_I_Rol_de_procedimentos.to_csv('Rol_de_procedimentos.csv')
 
-          return attachment_number[1]
-     
-   Função que retorno uma string com o numero do anexo
-     
-   #### Parâmetro: file_download_link
-                       Recebe o link do arquivo que deseja realizar o download
-
-## Função main
-
-    if __name__ == "__main__":
-
-        BASE_URL = ['https://www.gov.br/ans/pt-br/arquivos/assuntos/consumidor/o-que-seu-plano-deve-cobrir/Anexo_I_Rol_2021RN_465.2021_RN473_RN478_RN480_RN513_RN536.pdf', 
-                    'https://www.gov.br/ans/pt-br/arquivos/assuntos/consumidor/o-que-seu-plano-deve-cobrir/Anexo_II_DUT_2021_RN_465.2021_tea.br_RN473_RN477_RN478_RN480_RN513_RN536.pdf',
-                    'https://www.gov.br/ans/pt-br/arquivos/assuntos/consumidor/o-que-seu-plano-deve-cobrir/Anexo_III_DC_2021_RN_465.2021.v2.pdf',
-                    'https://www.gov.br/ans/pt-br/arquivos/assuntos/consumidor/o-que-seu-plano-deve-cobrir/Anexo_IV_PROUT_2021_RN_465.2021.v2.pdf',
-                    'https://www.gov.br/ans/pt-br/arquivos/assuntos/consumidor/o-que-seu-plano-deve-cobrir/Anexo_I_Rol_2021RN_465.2021_RN473_RN478_RN480_RN513_RN536.xlsx']
-        OUTPUT_DIR = 'output'
-        os.mkdir('./output')
-
-        for i in range(len(BASE_URL)):
-            name_file = os.path.join(OUTPUT_DIR, 'ANEXO_{}.{}'.format(attachment_number(BASE_URL[i]), file_type(BASE_URL[i])))
-            download_file(BASE_URL[i], name_file)
-
-        with ZipFile('dados.zip', 'w') as file_zip:
-            for i in range(len(BASE_URL)):
-                file_zip.write('output\ANEXO_{}.{}'.format(attachment_number(BASE_URL[i]), file_type(BASE_URL[i])))
+#### Zipando o arquivo salvo 
+    
+    with ZipFile('Teste_{vinicius_gonzaga}.zip', 'w') as file_zip:
+    file_zip.write('Rol_de_procedimentos.csv')
     
 ## Autor
 
